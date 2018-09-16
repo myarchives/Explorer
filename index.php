@@ -5,7 +5,7 @@
 
 	# FAVOURITE FOLDERS
 	$favourites = Array(
-		'name-of-the-favourite-folder'
+		'erik-edgren-blog'
 	);
 
 
@@ -59,11 +59,23 @@
 	# IF
 	if(isset($_GET['dirsize'])) {
 
-		# VARIABLE
-		$files = scan_dir($_GET['dirsize']);
+		# IF
+		if(file_exists($_GET['dirsize'])) {
 
-		# STRING
-		echo format_number($files['total_files']).' files ('.calculate_filesize($files['total_size']).')';
+			# VARIABLE
+			$files = scan_dir($_GET['dirsize']);
+
+			# STRING
+			echo format_number($files['total_files']).' files ('.calculate_filesize($files['total_size']).')';
+
+
+		# IF
+		} else {
+
+			# CODE
+			echo 'error-1';
+
+		}
 
 
 
@@ -190,7 +202,16 @@ section > ul > li > .no-link > span {
 
 .directory-size > i {
 	color: #111111;
-	font-size: 11px;
+	font-size: 14px;
+}
+
+.directory-size > .error {
+	color: #2e1111;
+	font-size: 14px;
+}
+
+.directory-size > .error > i {
+	margin-right: 10px;
 }
 
 
@@ -224,15 +245,28 @@ $(document).ready(function() {
 			method: 'GET',
 			success: function(s) {
 
-				$('.directory-size[data-name="' + directory + '"]').text(s);
+				// IF
+				if(s == 'error-1') {
+
+					// HTML
+					$('.directory-size[data-name="' + directory + '"]').html('<span class="error"><i class="fas fa-exclamation-circle"></i>Can\'t get directory info!</span>');
+
+
+				// IF
+				} else {
+
+					// TEXT
+					$('.directory-size[data-name="' + directory + '"]').text(s);
+
+				}
 
 			},
 
 
 			error: function(e) {
 
-				// MESSAGE
-				$('.directory-size[data-name="' + directory + '"]').text('Can\'t get directory size!');
+				// HTML
+				$('.directory-size[data-name="' + directory + '"]').html('<span class="error"><i class="fas fa-exclamation-circle"></i>Can\'t get directory info!</span>');
 
 			}
 		});
