@@ -91,7 +91,7 @@
 
 <!-- STILMALL -->
 <style type="text/css">
-@import 'https://fonts.googleapis.com/css?family=Roboto:300,400|Roboto+Condensed:300';
+@import 'https://fonts.googleapis.com/css?family=Roboto:300|Roboto+Condensed:300';
 
 
 
@@ -156,13 +156,22 @@ section > ul > li > i.fa-heart {
 	color: #6e2424;
 }
 
-section > ul > li > a {
+section > ul > li > i.fa-exclamation-triangle {
+	color: #99981b;
+}
+
+section > ul > li > a,
+section > ul > li > .no-link {
 	margin-left: 10px;
 }
 
-section > ul > li > span {
+section > ul > li > .directory-size {
 	color: #373737;
 	margin-left: 20px;
+}
+
+section > ul > li > .no-link > span {
+	color: #f3f3cd;
 }
 
 
@@ -307,11 +316,52 @@ $(document).ready(function() {
 
 
 
+		# ARRAY
+		$errors = Array();
+
+		# LOOP
+		foreach($favourites AS $favourite) {
+			if(!file_exists($favourite)) {
+				$str = '<li>';
+					$str .= '<i class="fas fa-exclamation-triangle"></i>';
+					$str .= '<span class="no-link">';
+						$str .= 'The favourite folder <span>'.$favourite.'</span> does not exists';
+					$str .= '</span>';
+				$str .= '</li>';
+			}
+
+			$errors[] = $str;
+		}
+
+
+
 		echo '<section>';
 
-			echo '<header class="no-select">Folders</header>';
+			# IF
+			if($errors[0] != null) {
 
-			# LISTA
+				# TITLE
+				echo '<header class="no-select">';
+					echo 'Errors';
+				echo '</header>';
+
+				# LIST
+				echo '<ul>';
+					foreach($errors AS $error) {
+						echo $error;
+					}
+				echo '</ul>';
+
+			}
+
+
+
+			# TITLE
+			echo '<header class="no-select">';
+				echo 'Folders';
+			echo '</header>';
+
+			# LIST
 			echo '<ul>';
 
 				# LOOP
