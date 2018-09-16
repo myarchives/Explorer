@@ -85,7 +85,7 @@
 
 
 <!--  TITEL  -->
-<title>Filutforskare</title>
+<title>Explorer</title>
 
 <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.2.0/css/all.css">
 
