@@ -5,7 +5,7 @@
 
 	# FAVOURITE FOLDERS
 	$favourites = Array(
-		'erik-edgren-blog'
+		'name-of-the-favourite-folder'
 	);
 
 
@@ -87,7 +87,7 @@
 <!--  TITEL  -->
 <title>Filutforskare</title>
 
-<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-TXfwrfuHVznxCssTxWoPZjhcss/hp38gEOH8UPZG/JcXonvBQ6SlsIF49wUzsGno" crossorigin="anonymous">
+<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.2.0/css/all.css">
 
 <!-- STILMALL -->
 <style type="text/css">
