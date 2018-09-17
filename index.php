@@ -50,6 +50,21 @@
 		);
 	}
 
+	# FUNCTION
+	function count_lines($file) {
+		$linecount = 0;
+		$handle = fopen($file, 'r');
+
+		while(!feof($handle)) {
+			$line = fgets($handle);
+			$linecount++;
+		}
+
+		fclose($handle);
+
+		return format_number($linecount);
+	}
+
 
 
 
@@ -139,10 +154,6 @@ ul {
 	list-style-type: none;
 }
 
-section {
-	display: inline-block;
-}
-
 section > header {
 	color: #222222;
 	font-family: 'Roboto Condensed', sans-serif;
@@ -177,7 +188,8 @@ section > ul > li > .no-link {
 	margin-left: 10px;
 }
 
-section > ul > li > .directory-size {
+section > ul > li > .directory-size,
+section > ul > li > .file-size {
 	color: #373737;
 	margin-left: 20px;
 }
@@ -234,9 +246,10 @@ section > ul > li > .no-link > span {
 <script type="text/javascript">
 $(document).ready(function() {
 
+	// LOOP
 	$('.directory-size').each(function() {
 
-		// VARIABLE
+		// VARIABLES
 		var directory = $(this).attr('data-name');
 
 		// GET
@@ -270,7 +283,6 @@ $(document).ready(function() {
 
 			}
 		});
-
 	});
 
 });
@@ -299,7 +311,7 @@ $(document).ready(function() {
 		if($_GET['err'] == '404') {
 
 			echo '<b>Error!</b><br>';
-			echo 'The wished file can\'t be found!';
+			echo 'The requested file can\'t be found!';
 
 		}
 
@@ -312,12 +324,21 @@ $(document).ready(function() {
 		$url = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 		$address = substr($url, strpos($url, '/') + 1);
 		$dir = ($address == '' ? '.': $address);
-		$blacklist = Array('.', '..', '.htaccess', 'index.php');
-		$array_folder = Array();
-		$array_file = Array();
 		$directories = Array();
 		$files_list = Array();
 		$files = scandir($dir);
+
+		# ARRAY
+		$blacklist = Array(
+			'.',
+			'..',
+			'.htaccess',
+			'index.php'
+		);
+
+		# ARRAY
+		$errors = Array();
+
 
 
 		# LOOP
@@ -341,18 +362,6 @@ $(document).ready(function() {
 		}
 
 
-
-
-
-
-
-
-
-
-
-		# ARRAY
-		$errors = Array();
-
 		# LOOP
 		foreach($favourites AS $favourite) {
 			if(!file_exists($favourite)) {
@@ -366,6 +375,10 @@ $(document).ready(function() {
 
 			$errors[] = $str;
 		}
+
+
+
+
 
 
 
@@ -401,14 +414,18 @@ $(document).ready(function() {
 				# LOOP
 				foreach($directories AS $directory) {
 					echo '<li>';
+
+						# FOLDER
 						echo '<i class="fas fa-'.(in_array($directory, $favourites) ? 'heart' : 'folder').'"></i>';
 						echo '<a href="http://'.$url . $directory.'">';
 							echo $directory;
 						echo '</a>';
 
+						# INFORMATION
 						echo '<span class="directory-size no-select" data-name="'.$directory.'">';
 							echo '<i class="fas fa-sync fa-spin"></i>';
 						echo '</span>';
+
 					echo '</li>';
 				}
 
@@ -418,9 +435,13 @@ $(document).ready(function() {
 
 			# IF
 			if(count($files_list) != 0) {
-				echo '<header class="no-select">Files</header>';
 
-				# LISTA
+				# TITLE
+				echo '<header class="no-select">';
+					echo 'Files';
+				echo '</header>';
+
+				# LIST
 				echo '<ul>';
 
 					# LOOP
@@ -429,6 +450,7 @@ $(document).ready(function() {
 						# VARIABLES
 						$file_info = pathinfo($file);
 						$file_type = $file_info['extension'];
+						$test += filesize($address . $file);
 
 						# ARRAY
 						$extensions = Array(
@@ -440,16 +462,21 @@ $(document).ready(function() {
 
 
 						echo '<li>';
+
+							# FILE
 							echo '<i class="fas fa-'.array_search($file_type, $extensions).'"></i>';
 							echo '<a href="http://'.$url . $file.'">'.$file.'</a>';
 
-							echo '<span class="no-select">';
-								echo calculate_filesize(filesize($address . $file));
+							# INFORMATION
+							echo '<span class="file-size no-select">';
+								echo count_lines($address . $file).' lines ('.calculate_filesize(filesize($address . $file)).')';
 							echo '</span>';
+
 						echo '</li>';
 					}
 
 				echo '</ul>';
+
 			}
 
 		echo '</section>';
