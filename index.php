@@ -30,11 +30,11 @@
 
 	# FUNCTION
 	function scan_dir($path) {
-		$ite=new RecursiveDirectoryIterator($path);
+		$ite = new RecursiveDirectoryIterator($path);
 
 		$bytestotal = 0;
 		$nbfiles = 0;
-		foreach(new RecursiveIteratorIterator($ite) as $filename=>$cur) {
+		foreach(new RecursiveIteratorIterator($ite) AS $filename=>$cur) {
 			$filesize=$cur->getSize();
 			$bytestotal+=$filesize;
 			$nbfiles++;
@@ -228,6 +228,14 @@ section > ul > li > .no-link > span {
 
 
 
+div#message {
+	font-size: 16px;
+	margin-top: 100px;
+	text-align: center;
+}
+
+
+
 
 
 
@@ -249,7 +257,7 @@ $(document).ready(function() {
 	// LOOP
 	$('.directory-size').each(function() {
 
-		// VARIABLES
+		// VARIABLE
 		var directory = $(this).attr('data-name');
 
 		// GET
@@ -283,6 +291,7 @@ $(document).ready(function() {
 
 			}
 		});
+
 	});
 
 });
@@ -310,8 +319,10 @@ $(document).ready(function() {
 		# IF
 		if($_GET['err'] == '404') {
 
-			echo '<b>Error!</b><br>';
-			echo 'The requested file can\'t be found!';
+			# MESSAGE
+			echo '<div id="message">';
+				echo 'The requested file could not be found!';
+			echo '</div>';
 
 		}
 
@@ -321,71 +332,25 @@ $(document).ready(function() {
 	} else {
 
 		# VARIABLES
-		$url = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-		$address = substr($url, strpos($url, '/') + 1);
-		$dir = ($address == '' ? '.': $address);
-		$directories = Array();
-		$files_list = Array();
-		$files = scandir($dir);
+		$list_folders = Array();
+		$list_files = Array();
+		$files = new DirectoryIterator(__DIR__);
+		$count_folders = 0;
+		$count_files = 0;
 
-		# ARRAY
+		# ARRAYS
+		$errors = Array();
 		$blacklist = Array(
-			'.',
-			'..',
 			'.htaccess',
 			'index.php'
 		);
 
-		# ARRAY
-		$errors = Array();
 
 
+		# IF
+		if(!$files) {
 
-		# LOOP
-		foreach($files AS $file) {
-
-			# IF
-			if(!in_array($file, $blacklist) AND strpos($file, '_') === false) {
-
-				# IF
-				if(is_dir($dir.'/'.$file)) {
-					$directories[] = $file;
-
-
-				# IF
-				} else {
-					$files_list[] = $file;
-				}
-
-			}
-
-		}
-
-
-		# LOOP
-		foreach($favourites AS $favourite) {
-			if(!file_exists($favourite)) {
-				$str = '<li>';
-					$str .= '<i class="fas fa-exclamation-triangle"></i>';
-					$str .= '<span class="no-link">';
-						$str .= 'The favourite folder <span>'.$favourite.'</span> does not exists';
-					$str .= '</span>';
-				$str .= '</li>';
-			}
-
-			$errors[] = $str;
-		}
-
-
-
-
-
-
-
-		echo '<section>';
-
-			# IF
-			if($errors[0] != null) {
+			echo '<section>';
 
 				# TITLE
 				echo '<header class="no-select">';
@@ -394,92 +359,190 @@ $(document).ready(function() {
 
 				# LIST
 				echo '<ul>';
-					foreach($errors AS $error) {
-						echo $error;
-					}
+					echo '<li>';
+						echo '<i class="fas fa-exclamation-triangle"></i>';
+						echo '<span class="no-link">';
+							echo 'The directory "'.$dir.'" can\'t be read';
+						echo '</span>';
+					echo '</li>';
 				echo '</ul>';
 
-			}
+			echo '</section>';
 
 
 
-			# TITLE
-			echo '<header class="no-select">';
-				echo 'Folders';
-			echo '</header>';
+		# IF
+		} else {
 
-			# LIST
-			echo '<ul>';
+			# LOOP
+			foreach($files AS $file) {
 
-				# LOOP
-				foreach($directories AS $directory) {
-					echo '<li>';
+				# IF
+				if($file->isDot() || $file->getBasename() === '.DS_Store') continue;
 
-						# FOLDER
-						echo '<i class="fas fa-'.(in_array($directory, $favourites) ? 'heart' : 'folder').'"></i>';
-						echo '<a href="http://'.$url . $directory.'">';
-							echo $directory;
-						echo '</a>';
+				# IF
+				if(!in_array($file->getFilename(), $blacklist)) {
 
-						# INFORMATION
-						echo '<span class="directory-size no-select" data-name="'.$directory.'">';
-							echo '<i class="fas fa-sync fa-spin"></i>';
-						echo '</span>';
+					# IF
+					if($file->isDir()) {
+						$list_folders[] = $file->getFilename();
+						$count_folders++;
 
-					echo '</li>';
+					# IF
+					} elseif($file->isFile()) {
+						$list_files[] = $file->getFilename();
+						$count_files++;
+					}
+
 				}
 
-			echo '</ul>';
-
-
-
-			# IF
-			if(count($files_list) != 0) {
-
-				# TITLE
-				echo '<header class="no-select">';
-					echo 'Files';
-				echo '</header>';
-
-				# LIST
-				echo '<ul>';
-
-					# LOOP
-					foreach($files_list AS $file) {
-
-						# VARIABLES
-						$file_info = pathinfo($file);
-						$file_type = $file_info['extension'];
-						$test += filesize($address . $file);
-
-						# ARRAY
-						$extensions = Array(
-							'file-image' => 'jpg',
-							'file-code' => 'html',
-							'file-code' => 'php',
-							'file-archive' => 'zip'
-						);
-
-
-						echo '<li>';
-
-							# FILE
-							echo '<i class="fas fa-'.array_search($file_type, $extensions).'"></i>';
-							echo '<a href="http://'.$url . $file.'">'.$file.'</a>';
-
-							# INFORMATION
-							echo '<span class="file-size no-select">';
-								echo count_lines($address . $file).' lines ('.calculate_filesize(filesize($address . $file)).')';
-							echo '</span>';
-
-						echo '</li>';
-					}
-
-				echo '</ul>';
-
 			}
 
-		echo '</section>';
+			# SORT
+			asort($list_folders);
+			asort($list_files);
+
+
+			# LOOP
+			foreach($favourites AS $favourite) {
+				if(!file_exists($favourite)) {
+					$str = '<li>';
+						$str .= '<i class="fas fa-exclamation-triangle"></i>';
+						$str .= '<span class="no-link">';
+							$str .= 'The favourite folder <span>'.$favourite.'</span> does not exists';
+						$str .= '</span>';
+					$str .= '</li>';
+				}
+
+				$errors[] = $str;
+			}
+
+
+
+
+
+
+
+			echo '<section>';
+
+				# IF
+				if($count_folders == 0 AND $count_files == 0) {
+
+					# MESSAGE
+					echo '<div id="message">';
+						echo 'Please add some folder and/or files to start!';
+					echo '</div>';
+
+
+
+				# IF
+				} else {
+
+					# IF
+					if($errors[0] != null) {
+
+						# TITLE
+						echo '<header class="no-select">';
+							echo 'Errors';
+						echo '</header>';
+
+						# LIST
+						echo '<ul>';
+							foreach($errors AS $error) {
+								echo $error;
+							}
+						echo '</ul>';
+
+					}
+
+
+
+					# IF
+					if($count_folders != 0) {
+
+						# TITLE
+						echo '<header class="no-select">';
+							echo 'Folders';
+						echo '</header>';
+
+						# LIST
+						echo '<ul>';
+
+							# LOOP
+							foreach($list_folders AS $directory) {
+								echo '<li>';
+
+									# FOLDER
+									echo '<i class="fas fa-'.(in_array($directory, $favourites) ? 'heart' : 'folder').'"></i>';
+									echo '<a href="http://'.$url . $directory.'">';
+										echo $directory;
+									echo '</a>';
+
+									# INFORMATION
+									echo '<span class="directory-size no-select" data-name="'.$directory.'">';
+										echo '<i class="fas fa-sync fa-spin"></i>';
+									echo '</span>';
+
+								echo '</li>';
+							}
+
+						echo '</ul>';
+
+					}
+
+
+
+					# IF
+					if($count_files != 0) {
+
+						# TITLE
+						echo '<header class="no-select">';
+							echo 'Files';
+						echo '</header>';
+
+						# LIST
+						echo '<ul>';
+
+							# LOOP
+							foreach($list_files AS $fileinfo) {
+
+								# VARIABLES
+								$file_info = pathinfo($file);
+								$file_type = $file_info['extension'];
+								$test += filesize($address . $file);
+
+								# ARRAY
+								$extensions = Array(
+									'file-image' => 'jpg',
+									'file-code' => 'html',
+									'file-code' => 'php',
+									'file-archive' => 'zip'
+								);
+
+
+								echo '<li>';
+
+									# FILE
+									echo '<i class="fas fa-'.array_search($file_type, $extensions).'"></i>';
+									echo '<a href="http://'.$url . $file.'">'.$file.'</a>';
+
+									# INFORMATION
+									echo '<span class="file-size no-select">';
+										echo count_lines($address . $file).' lines ('.calculate_filesize(filesize($address . $file)).')';
+									echo '</span>';
+
+								echo '</li>';
+							}
+
+						echo '</ul>';
+
+					}
+
+				}
+
+			echo '</section>';
+
+		}
 
 	}
 

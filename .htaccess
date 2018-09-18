@@ -1,0 +1,42 @@
+Options All -Indexes
+IndexIgnore *
+
+# PROTECT
+<Files .htaccess>
+	order allow,deny
+	deny from all
+</Files>
+
+
+
+# --------------------------------------- #
+
+
+
+<IfModule !mod_rewrite.c>
+
+	# ERROR
+	ErrorDocument 404 index.php?err=404
+
+</IfModule>
+
+
+<IfModule mod_rewrite.c>
+
+	# BLOCK
+	<FilesMatch "^index.php$">
+		Allow from all
+	</FilesMatch>
+
+	# FIRST OF CHOICE
+	DirectoryIndex index.php index.php
+
+	# ERRORS
+	ErrorDocument 404 /index.php?err=404
+
+
+	# REWRITE ENGINE
+	RewriteEngine On
+	RewriteBase /
+
+</IfModule>
