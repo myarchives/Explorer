@@ -507,9 +507,8 @@ $(document).ready(function() {
 							foreach($list_files AS $fileinfo) {
 
 								# VARIABLES
-								$file_info = pathinfo($file);
+								$file_info = pathinfo($fileinfo);
 								$file_type = $file_info['extension'];
-								$test += filesize($address . $file);
 
 								# ARRAY
 								$extensions = Array(
@@ -524,11 +523,11 @@ $(document).ready(function() {
 
 									# FILE
 									echo '<i class="fas fa-'.array_search($file_type, $extensions).'"></i>';
-									echo '<a href="http://'.$url . $file.'">'.$file.'</a>';
+									echo '<a href="http://'.$url . $fileinfo.'">'.$fileinfo.'</a>';
 
 									# INFORMATION
 									echo '<span class="file-size no-select">';
-										echo count_lines($address . $file).' lines ('.calculate_filesize(filesize($address . $file)).')';
+										echo count_lines($address . $fileinfo).' lines ('.calculate_filesize(filesize($address . $fileinfo)).')';
 									echo '</span>';
 
 								echo '</li>';
