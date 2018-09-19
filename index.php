@@ -332,6 +332,7 @@ $(document).ready(function() {
 	} else {
 
 		# VARIABLES
+		$host = $_SERVER['HTTP_HOST'];
 		$list_folders = Array();
 		$list_files = Array();
 		$files = new DirectoryIterator(__DIR__);
@@ -474,7 +475,7 @@ $(document).ready(function() {
 
 									# FOLDER
 									echo '<i class="fas fa-'.(in_array($directory, $favourites) ? 'heart' : 'folder').'"></i>';
-									echo '<a href="http://'.$url . $directory.'">';
+									echo '<a href="http://'.$host.'/'.$directory.'">';
 										echo $directory;
 									echo '</a>';
 
@@ -523,11 +524,11 @@ $(document).ready(function() {
 
 									# FILE
 									echo '<i class="fas fa-'.array_search($file_type, $extensions).'"></i>';
-									echo '<a href="http://'.$url . $fileinfo.'">'.$fileinfo.'</a>';
+									echo '<a href="http://'.$host.'/'.$fileinfo.'">'.$fileinfo.'</a>';
 
 									# INFORMATION
 									echo '<span class="file-size no-select">';
-										echo count_lines($address . $fileinfo).' lines ('.calculate_filesize(filesize($address . $fileinfo)).')';
+										echo count_lines($fileinfo).' lines ('.calculate_filesize(filesize($fileinfo)).')';
 									echo '</span>';
 
 								echo '</li>';
