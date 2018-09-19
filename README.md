@@ -1,2 +1,2 @@
 - The website loads the folders and calculates total amount of files (with subfolders) and getting the total size of all these files.
-- It's quick and dirty! Just put the `index.php` in root of the folder you want to get information about and you're good to go!
+- It's quick and dirty! Just put the `.htaccess` and `index.php` files in root of the folder you want to get information about and you're good to go!
