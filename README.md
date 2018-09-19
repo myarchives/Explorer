@@ -2,4 +2,4 @@
 - It's quick and dirty! Just put the `.htaccess` and `index.php` files in root of the folder you want to get information about and you're good to go!
 
 **Important!**
-If you want to put the files in a folder that are not in root of the file server (example: `/var/www/`), you must change the lines 19, 35, and 40 in `.htaccess` to the name of the folder. If you don't do this, Explorer thinks you want to explore for a example `/var/www/`.
+If you want to put the files in a folder that are not in root of the file server (example: `/var/www/`), you must add the name of the folder for the lines 19, 35, and 40 in `.htaccess`. If you don't do this, Explorer thinks you want to explore for a example `/var/www/`.
