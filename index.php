@@ -5,7 +5,7 @@
 
 	# FAVOURITE FOLDERS
 	$favourites = Array(
-		'erik-edgren-blog'
+		'a-favourite-folder'
 	);
 
 
@@ -179,8 +179,8 @@ section > ul > li > i.fa-heart {
 	color: #6e2424;
 }
 
-section > ul > li > i.fa-exclamation-triangle {
-	color: #99981b;
+section > ul > li > i.fa-info-circle {
+	color: #66a4de;
 }
 
 section > ul > li > a,
@@ -408,14 +408,14 @@ $(document).ready(function() {
 			foreach($favourites AS $favourite) {
 				if(!file_exists($favourite)) {
 					$str = '<li>';
-						$str .= '<i class="fas fa-exclamation-triangle"></i>';
+						$str .= '<i class="fas fa-info-circle"></i>';
 						$str .= '<span class="no-link">';
-							$str .= 'The favourite folder <span>'.$favourite.'</span> does not exists';
+							$str .= 'The favourite folder "'.$favourite.'" does not exists';
 						$str .= '</span>';
 					$str .= '</li>';
 				}
 
-				$errors[] = $str;
+				$notices[] = $str;
 			}
 
 
@@ -440,17 +440,17 @@ $(document).ready(function() {
 				} else {
 
 					# IF
-					if($errors[0] != null) {
+					if($notices[0] != null) {
 
 						# TITLE
 						echo '<header class="no-select">';
-							echo 'Errors';
+							echo 'Notices';
 						echo '</header>';
 
 						# LIST
 						echo '<ul>';
-							foreach($errors AS $error) {
-								echo $error;
+							foreach($notices AS $notice) {
+								echo $notice;
 							}
 						echo '</ul>';
 
