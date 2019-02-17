@@ -1,18 +1,24 @@
 <?php
 
-	# FEL
+	# HANDLE ERROR REPORTING
 	error_reporting(E_ALL & ~E_NOTICE);
 
 	# FAVOURITE FOLDERS
 	$favourites = Array(
-		'a-favourite-folder'
+		'edgren',
+		'vadret-justnu'
 	);
 
 	# IGNORE FOLDERS
-	$ignore_folders = Array();
+	$ignore_folders = Array(
+		'.vscode'
+	);
 
 	# IGNORE FILES
 	$ignore_files = Array();
+
+	# IGNORE FILE EXTENSIONS
+	$ignore_extensions = Array();
 
 
 
@@ -120,14 +126,11 @@
 <!--  TITEL  -->
 <title>Explorer</title>
 
-<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.2.0/css/all.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/solid.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/fontawesome.css">
 
 <!-- STILMALL -->
 <style type="text/css">
-@import 'https://fonts.googleapis.com/css?family=Roboto:300|Roboto+Condensed:300';
-
-
-
 html {
 	margin: 0;
 	padding: 0;
@@ -520,25 +523,34 @@ $(document).ready(function() {
 
 									# ARRAY
 									$extensions = Array(
-										'file-image' => 'jpg',
-										'file-image' => 'png',
-										'file-code' => 'php',
-										'file-archive' => 'zip'
+										'code' => 'html',
+										'code' => 'css',
+										'code' => 'php',
+										'image' => 'png',
+										'image' => 'jpg',
+										'file-archive' => 'zip',
+										'file-csv' => 'csv',
+										'file-excel' => 'xml',
+										'volume' => 'mp3',
+										'file-alt' => 'txt',
+										'database' => 'sql'
 									);
 
 
-									echo '<li>';
+									if(!in_array($file_type, $ignore_extensions)) {
+										echo '<li>';
 
-										# FILE
-										echo '<i class="fas fa-'.array_search($file_type, $extensions).'"></i>';
-										echo '<a href="http://'.$host.'/'.$fileinfo.'">'.$fileinfo.'</a>';
+											# FILE
+											echo '<i class="fas fa-'.(!in_array($file_type, $extensions) ? 'file' : array_search($file_type, $extensions)).'"></i>';
+											echo '<a href="http://'.$host.'/'.$fileinfo.'">'.$fileinfo.'</a>';
 
-										# INFORMATION
-										echo '<span class="file-size no-select">';
-											echo count_lines($fileinfo).' lines ('.calculate_filesize(filesize($fileinfo)).')';
-										echo '</span>';
+											# INFORMATION
+											echo '<span class="file-size no-select">';
+												echo count_lines($fileinfo).' lines ('.calculate_filesize(filesize($fileinfo)).')';
+											echo '</span>';
 
-									echo '</li>';
+										echo '</li>';
+									}
 
 								}
 							}
