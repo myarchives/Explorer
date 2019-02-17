@@ -8,13 +8,19 @@
 		'a-favourite-folder'
 	);
 
+	# IGNORE FOLDERS
+	$ignore_folders = Array();
+
+	# IGNORE FILES
+	$ignore_files = Array();
+
 
 
 	# FUNCTION
 	function format_number($number, $zeros = 0) {
 		$explode = explode('.', $number);
 
-		if(count($explode[1]) == 0) {
+		if($explode[1] == null) {
 			return number_format($explode[0], 0, ',', ' ');
 		} else {
 			return number_format($number, $zeros, ',', ' ');
@@ -128,9 +134,9 @@ html {
 }
 
 body {
-	background-color: #000000;
-	color: #f8f8f8;
-	font-family: 'Roboto', sans-serif;
+	background-color: #111111;
+	color: #f5f5f5;
+	font-family: 'Arial', sans-serif;
 	font-size: 14px;
 	font-weight: 300;
 	line-height: 28px;
@@ -144,7 +150,7 @@ body {
 
 
 a {
-	color: #f8f8f8;
+	color: #f5f5f5;
 	text-decoration: none;
 }
 
@@ -155,13 +161,11 @@ ul {
 }
 
 section > header {
-	color: #222222;
-	font-family: 'Roboto Condensed', sans-serif;
-	font-size: 34px;
-	font-weight: 300;
+	color: #f5f5f5;
+	font-size: 18px;
+	font-weight: 700;
 	margin-bottom: 20px;
 	margin-left: 34px;
-	text-transform: lowercase;
 }
 
 section > header:not(:first-child) {
@@ -169,18 +173,18 @@ section > header:not(:first-child) {
 }
 
 section > ul > li > i {
-	color: #373737;
+	color: #f5f5f5;
 	margin-right: 5px;
 	text-align: center;
 	width: 20px;
 }
 
 section > ul > li > i.fa-heart {
-	color: #6e2424;
+	color: #f44336;
 }
 
 section > ul > li > i.fa-info-circle {
-	color: #66a4de;
+	color: #fff59d;
 }
 
 section > ul > li > a,
@@ -190,7 +194,7 @@ section > ul > li > .no-link {
 
 section > ul > li > .directory-size,
 section > ul > li > .file-size {
-	color: #373737;
+	color: #455a64;
 	margin-left: 20px;
 }
 
@@ -471,20 +475,22 @@ $(document).ready(function() {
 
 							# LOOP
 							foreach($list_folders AS $directory) {
-								echo '<li>';
+								if(!in_array($directory, $ignore_folders)) {
+									echo '<li>';
 
-									# FOLDER
-									echo '<i class="fas fa-'.(in_array($directory, $favourites) ? 'heart' : 'folder').'"></i>';
-									echo '<a href="http://'.$host.'/'.$directory.'">';
-										echo $directory;
-									echo '</a>';
+										# FOLDER
+										echo '<i class="fas fa-'.(in_array($directory, $favourites) ? 'heart' : 'folder').'"></i>';
+										echo '<a href="http://'.$host.'/'.$directory.'">';
+											echo $directory;
+										echo '</a>';
 
-									# INFORMATION
-									echo '<span class="directory-size no-select" data-name="'.$directory.'">';
-										echo '<i class="fas fa-sync fa-spin"></i>';
-									echo '</span>';
+										# INFORMATION
+										echo '<span class="directory-size no-select" data-name="'.$directory.'">';
+											echo '<i class="fas fa-sync fa-spin"></i>';
+										echo '</span>';
 
-								echo '</li>';
+									echo '</li>';
+								}
 							}
 
 						echo '</ul>';
@@ -506,32 +512,35 @@ $(document).ready(function() {
 
 							# LOOP
 							foreach($list_files AS $fileinfo) {
+								if(!in_array($fileinfo, $ignore_files)) {
 
-								# VARIABLES
-								$file_info = pathinfo($fileinfo);
-								$file_type = $file_info['extension'];
+									# VARIABLES
+									$file_info = pathinfo($fileinfo);
+									$file_type = $file_info['extension'];
 
-								# ARRAY
-								$extensions = Array(
-									'file-image' => 'jpg',
-									'file-code' => 'html',
-									'file-code' => 'php',
-									'file-archive' => 'zip'
-								);
+									# ARRAY
+									$extensions = Array(
+										'file-image' => 'jpg',
+										'file-image' => 'png',
+										'file-code' => 'php',
+										'file-archive' => 'zip'
+									);
 
 
-								echo '<li>';
+									echo '<li>';
 
-									# FILE
-									echo '<i class="fas fa-'.array_search($file_type, $extensions).'"></i>';
-									echo '<a href="http://'.$host.'/'.$fileinfo.'">'.$fileinfo.'</a>';
+										# FILE
+										echo '<i class="fas fa-'.array_search($file_type, $extensions).'"></i>';
+										echo '<a href="http://'.$host.'/'.$fileinfo.'">'.$fileinfo.'</a>';
 
-									# INFORMATION
-									echo '<span class="file-size no-select">';
-										echo count_lines($fileinfo).' lines ('.calculate_filesize(filesize($fileinfo)).')';
-									echo '</span>';
+										# INFORMATION
+										echo '<span class="file-size no-select">';
+											echo count_lines($fileinfo).' lines ('.calculate_filesize(filesize($fileinfo)).')';
+										echo '</span>';
 
-								echo '</li>';
+									echo '</li>';
+
+								}
 							}
 
 						echo '</ul>';
