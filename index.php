@@ -340,6 +340,7 @@ $(document).ready(function() {
 
 		# VARIABLES
 		$host = $_SERVER['HTTP_HOST'];
+		$list_favourites = Array();
 		$list_folders = Array();
 		$list_files = Array();
 		$files = new DirectoryIterator(__DIR__);
@@ -393,7 +394,14 @@ $(document).ready(function() {
 
 					# IF
 					if($file->isDir()) {
-						$list_folders[] = $file->getFilename();
+
+						if(in_array($file->getFilename(), $favourites)) {
+							$list_favourites[] = $file->getFilename();
+						}
+						else {
+							$list_folders[] = $file->getFilename();
+						}
+
 						$count_folders++;
 
 					# IF
@@ -407,6 +415,7 @@ $(document).ready(function() {
 			}
 
 			# SORT
+			asort($list_favourites);
 			asort($list_folders);
 			asort($list_files);
 
@@ -476,24 +485,43 @@ $(document).ready(function() {
 						# LIST
 						echo '<ul>';
 
+						foreach($list_favourites AS $favourite) {
+							if(!in_array($favourite, $ignore_folders)) {
+								echo '<li>';
+
+									# FOLDER
+									echo '<i class="fas fa-'.(in_array($favourite, $favourites) ? 'heart' : 'folder').'"></i>';
+									echo '<a href="http://'.$host.'/'.$favourite.'">';
+										echo $favourite;
+									echo '</a>';
+
+									# INFORMATION
+									echo '<span class="directory-size no-select" data-name="'.$favourite.'">';
+										echo '<i class="fas fa-sync fa-spin"></i>';
+									echo '</span>';
+
+								echo '</li>';
+							}
+						}
+
 							# LOOP
 							foreach($list_folders AS $directory) {
-								if(!in_array($directory, $ignore_folders)) {
-									echo '<li>';
+									if(!in_array($directory, $ignore_folders)) {
+										echo '<li>';
 
-										# FOLDER
-										echo '<i class="fas fa-'.(in_array($directory, $favourites) ? 'heart' : 'folder').'"></i>';
-										echo '<a href="http://'.$host.'/'.$directory.'">';
-											echo $directory;
-										echo '</a>';
+											# FOLDER
+											echo '<i class="fas fa-'.(in_array($directory, $favourites) ? 'heart' : 'folder').'"></i>';
+											echo '<a href="http://'.$host.'/'.$directory.'">';
+												echo $directory;
+											echo '</a>';
 
-										# INFORMATION
-										echo '<span class="directory-size no-select" data-name="'.$directory.'">';
-											echo '<i class="fas fa-sync fa-spin"></i>';
-										echo '</span>';
+											# INFORMATION
+											echo '<span class="directory-size no-select" data-name="'.$directory.'">';
+												echo '<i class="fas fa-sync fa-spin"></i>';
+											echo '</span>';
 
-									echo '</li>';
-								}
+										echo '</li>';
+									}
 							}
 
 						echo '</ul>';
